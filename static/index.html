@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hemasree's Chatbot</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; margin: 2rem; }
+    #chatbox { max-width: 600px; margin: auto; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .message { margin-bottom: 1rem; }
+    .user { font-weight: bold; color: #0056b3; }
+    .bot { color: #333; }
+    input, button { padding: 10px; width: 80%; margin-top: 1rem; }
+    button { width: 18%; }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>Ask Hemasree's Chatbot 💬</h2>
+    <div id="messages"></div>
+    <input type="text" id="user-input" placeholder="Ask something...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const msg = input.value;
+      if (!msg) return;
+
+      // Display user's message
+      const messages = document.getElementById("messages");
+      messages.innerHTML += `<div class="message user">👤 You: ${msg}</div>`;
+
+      // Call FastAPI backend
+      const res = await fetch("/chat/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+      });
+
+      const data = await res.json();
+      messages.innerHTML += `<div class="message bot">🤖 Bot: ${data.reply}</div>`;
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
